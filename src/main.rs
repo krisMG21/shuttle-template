@@ -9,25 +9,25 @@ async fn retrieve_html() -> String {
         .unwrap();
     return response;
 }
-fn parse_html(response: &String) -> String {
+fn parse_html(response: &String) -> Vec<String> {
     let doc_body = Html::parse_document(&response);
     let title = Selector::parse(".titleline").unwrap();
-    let mut result = String::new();
+
+    let mut titles = Vec::new(); // declare empty vector to hold titles
     for title in doc_body.select(&title) {
-        let titles = title.text().collect::<Vec<_>>();
-        if !titles.is_empty() {
-            result.push_str(&titles[0]);
-            result.push('\n');
+        let title_text = title.text().collect::<Vec<_>>(); // Push each title onto the Vec after converting it to a String
+        if !title_text.is_empty() {
+            titles.push(String::from(title_text[0]))
         }
     }
-    result
+    titles
 }
 
 #[get("/scraper")]
 async fn scraper() -> impl Responder {
     let response = retrieve_html().await;
     let parsed_response = parse_html(&response);
-    HttpResponse::Ok().body(parsed_response)
+    HttpResponse::Ok().json(parsed_response)
 }
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
