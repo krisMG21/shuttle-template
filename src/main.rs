@@ -23,7 +23,7 @@ fn extract_titles(response: &String) -> Vec<String> {
     titles
 }
 
-#[get("/scraper")]
+#[get("/")]
 async fn scraper() -> impl Responder {
     let response = retrieve_html().await;
     let parsed_response = extract_titles(&response);
