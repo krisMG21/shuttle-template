@@ -9,7 +9,7 @@ async fn retrieve_html() -> String {
         .unwrap();
     return response;
 }
-fn parse_html(response: &String) -> Vec<String> {
+fn extract_titles(response: &String) -> Vec<String> {
     let doc_body = Html::parse_document(&response);
     let title = Selector::parse(".titleline").unwrap();
 
@@ -26,7 +26,7 @@ fn parse_html(response: &String) -> Vec<String> {
 #[get("/scraper")]
 async fn scraper() -> impl Responder {
     let response = retrieve_html().await;
-    let parsed_response = parse_html(&response);
+    let parsed_response = extract_titles(&response);
     HttpResponse::Ok().json(parsed_response)
 }
 #[actix_web::main]
