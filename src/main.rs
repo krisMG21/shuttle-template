@@ -38,6 +38,7 @@ async fn scraper() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| App::new().service(scraper))
         .bind("127.0.0.1:8080")?
+        .workers(4) // turn this into a multi-thread server
         .run()
         .await
 }
