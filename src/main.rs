@@ -12,11 +12,12 @@ async fn retrieve_html() -> String {
 async fn extract_country_names() -> Vec<String> {
     let (document, country_name_selector) = select_el(".country-name").await;
 
-    let mut countries = Vec::new(); // declare empty vector to hold names
+    let mut countries: Vec<String> = Vec::new(); // declare empty vector to hold names
     for country in document.select(&country_name_selector) {
         let country_name = country.text().collect::<String>().trim().to_owned(); // collect the text from the element and trim the whitespace
         countries.push(country_name);
     }
+    countries.sort_by(|a, b| a.to_lowercase().cmp(&b.to_lowercase())); // sort the names alphabetically
     countries
 }
 
