@@ -1,7 +1,7 @@
 use ::scraper::{Html, Selector};
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 async fn retrieve_html() -> String {
-    let response = reqwest::get("https://news.ycombinator.com")
+    let response = reqwest::get("https://www.scrapethissite.com/pages/simple")
         .await
         .unwrap()
         .text()
@@ -9,29 +9,28 @@ async fn retrieve_html() -> String {
         .unwrap();
     return response;
 }
-async fn extract_titles() -> Vec<String> {
-    let (document, title) = select_el(".titleline").await;
+async fn extract_country_names() -> Vec<String> {
+    let (document, country_name_selector) = select_el(".country-name").await;
 
-    let mut titles = Vec::new(); // declare empty vector to hold titles
-    for title in document.select(&title) {
-        let title_text = title.text().collect::<Vec<_>>(); // Push each title onto the Vec after converting it to a String
-        if !title_text.is_empty() {
-            titles.push(String::from(title_text[0]))
-        }
+    let mut countries = Vec::new(); // declare empty vector to hold names
+    for country in document.select(&country_name_selector) {
+        let country_name = country.text().collect::<String>().trim().to_owned(); // collect the text from the element and trim the whitespace
+        countries.push(country_name);
     }
-    titles
+    countries
 }
 
 async fn select_el(selector: &str) -> (Html, Selector) {
     let response = retrieve_html().await;
     let document = Html::parse_document(&response);
-    let title = Selector::parse(selector).unwrap();
-    (document, title)
+    let country_name_selector = Selector::parse(selector).unwrap();
+
+    (document, country_name_selector)
 }
 
 #[get("/")]
 async fn scraper() -> impl Responder {
-    let parsed_response = extract_titles().await;
+    let parsed_response = extract_country_names().await;
     HttpResponse::Ok().json(parsed_response)
 }
 #[actix_web::main]
