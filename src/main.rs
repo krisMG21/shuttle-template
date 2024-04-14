@@ -10,10 +10,10 @@ async fn retrieve_html() -> String {
     return response;
 }
 async fn extract_titles() -> Vec<String> {
-    let (doc_body, title) = select_el(".titleline").await;
+    let (document, title) = select_el(".titleline").await;
 
     let mut titles = Vec::new(); // declare empty vector to hold titles
-    for title in doc_body.select(&title) {
+    for title in document.select(&title) {
         let title_text = title.text().collect::<Vec<_>>(); // Push each title onto the Vec after converting it to a String
         if !title_text.is_empty() {
             titles.push(String::from(title_text[0]))
