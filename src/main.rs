@@ -1,5 +1,6 @@
 use ::scraper::{Html, Selector};
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+
 async fn retrieve_html() -> String {
     let response = reqwest::get("https://www.scrapethissite.com/pages/simple")
         .await
@@ -10,8 +11,9 @@ async fn retrieve_html() -> String {
     return response;
 }
 async fn extract_country_names() -> Vec<String> {
-    let (document, country_name_selector) = select_el(".country-name").await;
-
+    let response = retrieve_html().await;
+    let country_name_selector = select_el(".country-name").await;
+    let document = Html::parse_document(&response);
     let mut countries: Vec<String> = Vec::new(); // declare empty vector to hold names
     for country in document.select(&country_name_selector) {
         let country_name = country.text().collect::<String>().trim().to_owned(); // collect the text from the element and trim the whitespace
@@ -21,12 +23,9 @@ async fn extract_country_names() -> Vec<String> {
     countries
 }
 
-async fn select_el(selector: &str) -> (Html, Selector) {
-    let response = retrieve_html().await;
-    let document = Html::parse_document(&response);
+async fn select_el(selector: &str) -> Selector {
     let country_name_selector = Selector::parse(selector).unwrap();
-
-    (document, country_name_selector)
+    country_name_selector
 }
 
 #[get("/")]
