@@ -4,7 +4,7 @@ use scraper::Html;
 
 use super::selector::{retrieve_html, select_el};
 
-pub async fn extract_countries() -> BTreeMap<String, String> {
+pub async fn extract() -> BTreeMap<String, String> {
     let response = retrieve_html().await;
     let country_name_selector = select_el(".country-name").await;
     let capital_selector = select_el(".country-capital").await;

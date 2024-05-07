@@ -5,7 +5,7 @@ use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 
 use serde::Serialize;
 
-use countries::extract_countries;
+use countries::extract;
 
 #[derive(Serialize)]
 struct Country {
@@ -15,7 +15,7 @@ struct Country {
 
 #[get("/country/{name}")]
 async fn get_country(name: web::Path<String>) -> impl Responder {
-    let parsed_response = extract_countries().await;
+    let parsed_response = extract().await;
     let (country, capital) = parsed_response.get_key_value(&name.to_string()).unwrap();
     HttpResponse::Ok().json(web::Json(Country {
         name: country.to_string(),
@@ -25,7 +25,7 @@ async fn get_country(name: web::Path<String>) -> impl Responder {
 
 #[get("/")]
 async fn scraper() -> impl Responder {
-    let parsed_response = extract_countries().await;
+    let parsed_response = extract().await;
     let mut countries: Vec<Country> = vec![];
     for (country, capital) in parsed_response.iter() {
         countries.push(Country {
