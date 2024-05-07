@@ -1,8 +1,9 @@
-use std::collections::BTreeMap;
-
-use ::scraper::{Html, Selector};
+mod selector;
+use ::scraper::Html;
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use selector::select_el;
 use serde::Serialize;
+use std::collections::BTreeMap;
 #[derive(Serialize)]
 struct Country {
     name: String,
@@ -35,11 +36,6 @@ async fn extract_countries() -> BTreeMap<String, String> {
     let table = BTreeMap::from_iter(countries.into_iter().zip(capitals.into_iter()));
 
     table
-}
-
-async fn select_el(selector: &str) -> Selector {
-    let country_name_selector = Selector::parse(selector).unwrap();
-    country_name_selector
 }
 
 #[get("/country/{name}")]
