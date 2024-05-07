@@ -1,7 +1,7 @@
 mod selector;
 use ::scraper::Html;
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
-use selector::{retrieve_html, select_el};
+use selector::*;
 use serde::Serialize;
 use std::collections::BTreeMap;
 #[derive(Serialize)]
