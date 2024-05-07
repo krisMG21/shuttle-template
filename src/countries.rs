@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
 use scraper::Html;
+use serde::Serialize;
 
 use super::selector::{retrieve_html, select_el};
 
@@ -22,4 +23,9 @@ pub async fn extract() -> BTreeMap<String, String> {
     let table = BTreeMap::from_iter(countries.into_iter().zip(capitals.into_iter()));
 
     table
+}
+#[derive(Serialize)]
+pub struct Country {
+    pub name: String,
+    pub capital: String,
 }

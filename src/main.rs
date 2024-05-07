@@ -3,15 +3,7 @@ mod selector;
 
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 
-use serde::Serialize;
-
-use countries::extract;
-
-#[derive(Serialize)]
-struct Country {
-    name: String,
-    capital: String,
-}
+use countries::{extract, Country};
 
 #[get("/country/{name}")]
 async fn get_country(name: web::Path<String>) -> impl Responder {
