@@ -1,7 +1,7 @@
 mod selector;
 use ::scraper::Html;
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
-use selector::select_el;
+use selector::{retrieve_html, select_el};
 use serde::Serialize;
 use std::collections::BTreeMap;
 #[derive(Serialize)]
@@ -9,15 +9,7 @@ struct Country {
     name: String,
     capital: String,
 }
-async fn retrieve_html() -> String {
-    let response = reqwest::get("https://www.scrapethissite.com/pages/simple")
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
-    return response;
-}
+
 async fn extract_countries() -> BTreeMap<String, String> {
     let response = retrieve_html().await;
     let country_name_selector = select_el(".country-name").await;
