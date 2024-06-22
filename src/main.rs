@@ -41,7 +41,6 @@ async fn scraper() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| App::new().service(scraper).service(get_country))
         .bind(format!("0.0.0.0:{}", *PORT))?
-        .workers(4) // turn this into a multi-thread server
         .run()
         .await
 }
