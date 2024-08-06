@@ -1,12 +1,16 @@
 mod countries;
 mod selector;
 
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{
+    get,
+    web::{self, ServiceConfig},
+    HttpResponse, Responder,
+};
 
 use countries::{extract, Country};
-
 use dotenv::dotenv;
 use lazy_static::lazy_static;
+use shuttle_actix_web::ShuttleActixWeb;
 use std::env;
 lazy_static! {
     static ref PORT: String = {
@@ -37,10 +41,11 @@ async fn scraper() -> impl Responder {
     }
     HttpResponse::Ok().json(countries)
 }
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(scraper).service(get_country))
-        .bind(format!("0.0.0.0:{}", *PORT))?
-        .run()
-        .await
+#[shuttle_runtime::main]
+async fn main() -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
+    let config = move |cfg: &mut ServiceConfig| {
+        cfg.service(scraper).service(get_country);
+    };
+
+    Ok(config.into())
 }
